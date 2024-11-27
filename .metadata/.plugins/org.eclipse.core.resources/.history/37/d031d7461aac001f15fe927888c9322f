@@ -1,0 +1,209 @@
+package application;
+
+import java.util.List;
+
+public class User {
+    private int userId;
+    public String username;
+    public String password;
+    private UserProfile profile;
+    private Database db;
+
+    public User(int userId, String username, String password, UserProfile profile, Database db) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.profile = profile;
+        this.db = db;
+    }
+
+    public boolean login(String inputUsername, String inputPassword) {
+        try {
+            User user = db.getUser(inputUsername, inputPassword);
+            if (user != null) {
+            	System.out.println(user.username);
+                this.userId = user.userId;
+                this.username = user.username;
+                this.password = user.password;
+                //this.profile = db.getUserProfile(user.userId);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.out.println("Login error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Itinerary Functions
+    public void createItinerary(String tripTitle, String startDate, String endDate, String destination) {
+        try {
+            db.createItinerary(userId, tripTitle, startDate, endDate, destination);
+            System.out.println("Itinerary created for trip: " + tripTitle);
+        } catch (Exception e) {
+            System.out.println("Error creating itinerary: " + e.getMessage());
+        }
+    }
+
+    public List<Itinerary> viewItineraries() {
+        try {
+            return db.getItineraries(userId); // Ensure it fetches only the current user's itineraries
+        } catch (Exception e) {
+            System.out.println("Error viewing itineraries: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void editItinerary(int itineraryId, String newTripTitle, String newStartDate, String newEndDate, String newDestination) {
+        try {
+            db.editItinerary(itineraryId, newTripTitle, newStartDate, newEndDate, newDestination);  // Database update
+            System.out.println("Itinerary updated for trip: " + newTripTitle);
+        } catch (Exception e) {
+            System.out.println("Error editing itinerary: " + e.getMessage());
+        }
+    }
+
+    public void deleteItinerary(int itineraryId) {
+        try {
+            db.deleteItinerary(itineraryId);
+            System.out.println("Itinerary deleted.");
+        } catch (Exception e) {
+            System.out.println("Error deleting itinerary: " + e.getMessage());
+        }
+    }
+
+    // Profile Functions
+    public void editProfile(String name, String email, String preferences) {
+        try {
+            db.updateUserProfile(userId, name, email, preferences); // Database update
+            profile.setName(name);   // Update local profile
+            profile.setEmail(email);
+            profile.setPreferences(preferences);
+            System.out.println("Profile updated in the database.");
+        } catch (Exception e) {
+            System.out.println("Error updating profile: " + e.getMessage());
+        }
+    }
+
+    public void viewProfile() {
+        try {
+            UserProfile updatedProfile = db.getUserProfile(userId); // Fetch profile from DB
+            if (updatedProfile != null) {
+                profile = updatedProfile;
+                System.out.println("User Profile:");
+                System.out.println("Name: " + profile.getName());
+                System.out.println("Email: " + profile.getEmail());
+                System.out.println("Preferences: " + profile.getPreferences());
+            } else {
+                System.out.println("Profile not found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error viewing profile: " + e.getMessage());
+        }
+    }
+
+    public void deleteProfile() {
+        try {
+            db.deleteUser(userId);
+            System.out.println("User profile deleted.");
+        } catch (Exception e) {
+            System.out.println("Error deleting profile: " + e.getMessage());
+        }
+    }
+
+    // Expense Functions
+    public void addExpense(int itineraryId, String description, double amount) {
+        try {
+            db.addExpense(itineraryId, "Expense", description, amount);
+            System.out.println("Expense added: " + description + " - $" + amount);
+        } catch (Exception e) {
+            System.out.println("Error adding expense: " + e.getMessage());
+        }
+    }
+
+    public List<Expense> viewExpenses(int itineraryId) {
+        try {
+            return db.getExpenses(itineraryId);
+        } catch (Exception e) {
+            System.out.println("Error viewing expenses: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // TripChat Functions
+    public void addTripChat(int itineraryId, String message) {
+        try {
+            db.addTripChat(itineraryId, userId, message);  // Database interaction to insert a message into the trip chat
+            System.out.println("Message added to trip chat: " + message);
+        } catch (Exception e) {
+            System.out.println("Error adding message to trip chat: " + e.getMessage());
+        }
+    }
+
+    public List<String> viewTripChat(int itineraryId) {
+        try {
+            return db.getTripChat(itineraryId);  // Database interaction to fetch all messages for the itinerary
+        } catch (Exception e) {
+            System.out.println("Error viewing trip chat: " + e.getMessage());
+            return null;
+        }
+    }
+
+    // Additional functionalities
+
+    public void logFeedback(String message) {
+        try {
+            db.logFeedback(userId, message);
+            System.out.println("Feedback logged: " + message);
+        } catch (Exception e) {
+            System.out.println("Error logging feedback: " + e.getMessage());
+        }
+    }
+
+    public void addCollaborator(int itineraryId, int collaboratorUserId, String role) {
+        try {
+            db.logCollaborator(itineraryId, collaboratorUserId, role);  // Database interaction to add a collaborator
+            System.out.println("Collaborator added with role: " + role);
+        } catch (Exception e) {
+            System.out.println("Error adding collaborator: " + e.getMessage());
+        }
+    }
+
+    // New Methods
+
+    public List<User> getAllUsers() {
+        try {
+            return db.getAllUsers();
+        } catch (Exception e) {
+            System.out.println("Error retrieving all users: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Itinerary> getAllItineraries() {
+        try {
+            return db.getAllItineraries();
+        } catch (Exception e) {
+            System.out.println("Error retrieving all itineraries: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void deleteUser(int userIdToDelete) {
+        try {
+            db.deleteUser(userIdToDelete);
+            System.out.println("User with ID " + userIdToDelete + " deleted.");
+        } catch (Exception e) {
+            System.out.println("Error deleting user: " + e.getMessage());
+        }
+    }
+
+    public List<String> viewFeedbacks() {
+        try {
+            return db.getAllFeedbacks();  // Fetch feedbacks specific to the user
+        } catch (Exception e) {
+            System.out.println("Error viewing feedbacks: " + e.getMessage());
+            return null;
+        }
+    }
+}

@@ -1,0 +1,392 @@
+package application;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Database 
+{
+    private static final String URL = "jdbc:mysql://localhost:3306/TripManagementSystem";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "aalyankazmi";
+
+    public Connection getConnection() throws SQLException 
+    {
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+
+    public void createUser(String username, String password, String email, String fullName, String role) throws SQLException 
+    {
+        String procedure = "{CALL UserLogin(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+	        stmt.setString(1, username);
+	        stmt.setString(2, password);
+	        stmt.setString(3, email);
+	        stmt.setString(4, fullName);
+	        stmt.setString(5, role);
+	        stmt.executeUpdate();
+        }
+    }
+
+    public User getUser(String username, String password) throws SQLException 
+    {
+        String query = "SELECT * FROM Users WHERE Username = ? AND Password = ?";
+        try (Connection con = getConnection();
+        PreparedStatement stmt = con.prepareStatement(query)) 
+        {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) 
+            {
+            	System.out.println("dsad");
+            	UserProfile profile = new UserProfile(
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        ""
+                );
+                return new User(rs.getInt("UserID"), rs.getString("Username"), rs.getString("Password"), profile, this);
+            }
+        }
+        return null;
+    }
+
+    public void createItinerary(int userId, String tripTitle, String startDate, String endDate, String destination) throws SQLException 
+    {
+        String procedure = "{CALL LogItinerary(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+            stmt.setInt(1, userId);
+            stmt.setString(2, tripTitle);
+            stmt.setString(3, startDate);
+            stmt.setString(4, endDate);
+            stmt.setString(5, destination);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<Expense> getExpenses(int itineraryId) throws SQLException 
+    {
+        String query = "SELECT * FROM Expenses WHERE ItineraryID = ?";
+        List<Expense> expenses = new ArrayList<>();
+        try (Connection con = getConnection();
+        PreparedStatement stmt = con.prepareStatement(query)) 
+        {
+            stmt.setInt(1, itineraryId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) 
+            {
+                Expense expense = new Expense(
+                        rs.getString("Category"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Description")
+                );
+                expenses.add(expense);
+            }
+        }
+        return expenses;
+    }
+
+    public void logExpense(int itineraryId, String category, String description, double amount) throws SQLException 
+    {
+        String procedure = "{CALL LogExpense(?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+            stmt.setInt(1, itineraryId);
+            stmt.setString(2, category);
+            stmt.setString(3, description);
+            stmt.setDouble(4, amount);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void logFeedback(int userId, String message) throws SQLException 
+    {
+        String procedure = "{CALL LogFeedback(?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+            stmt.setInt(1, userId);
+            stmt.setString(2, message);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<User> getAllUsers() throws SQLException {
+        String procedure = "{CALL GetAllUsers()}";
+        List<User> users = new ArrayList<>();
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs.getInt("UserID"), rs.getString("Username"), null, null, this));
+            }
+        }
+        return users;
+    }
+
+    public List<Itinerary> getAllItineraries() throws SQLException {
+        String procedure = "{CALL GetAllItineraries()}";
+        List<Itinerary> itineraries = new ArrayList<>();
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                itineraries.add(new Itinerary(rs.getInt("ItineraryID"), rs.getString("TripTitle"), rs.getInt("UserID")));
+            }
+        }
+        return itineraries;
+    }
+
+    public void deleteUser(int userId) throws SQLException {
+        String procedure = "{CALL DeleteUser(?)}";
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void deleteItinerary(int itineraryId) throws SQLException {
+        String procedure = "{CALL DeleteItinerary(?)}";
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, itineraryId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void editItinerary(int itineraryId, String tripTitle, String startDate, String endDate, String destination) throws SQLException {
+        String procedure = "{CALL EditItinerary(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, itineraryId);
+            stmt.setString(2, tripTitle);
+            stmt.setString(3, startDate);
+            stmt.setString(4, endDate);
+            stmt.setString(5, destination);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void addFeedback(int userId, String message) throws SQLException {
+        String procedure = "{CALL AddFeedback(?, ?)}";
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, message);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<Feedback> viewFeedback(int userId) throws SQLException {
+        String procedure = "{CALL ViewFeedback(?)}";
+        List<Feedback> feedbackList = new ArrayList<>();
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                feedbackList.add(new Feedback(rs.getInt("FeedbackID"), rs.getInt("UserID"), rs.getString("Message")));
+            }
+        }
+        return feedbackList;
+    }
+
+    public List<User> getAllUsers(int userId, String username, String email) throws SQLException {
+        String query = "SELECT UserID, Username, Email FROM Users";
+        List<User> users = new ArrayList<>();
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs.getInt("UserID"), rs.getString("Username"), null, new UserProfile(null, rs.getString("Email"), null), this));
+            }
+        }
+        return users;
+    }
+
+    public List<Itinerary> getAllItineraries(String tripTitle, int userId) throws SQLException {
+        String query = "SELECT ItineraryID, TripTitle, UserID FROM Itineraries WHERE TripTitle LIKE ? AND UserID = ?";
+        List<Itinerary> itineraries = new ArrayList<>();
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setString(1, "%" + tripTitle + "%");
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                itineraries.add(new Itinerary(rs.getInt("ItineraryID"), rs.getString("TripTitle"), rs.getInt("UserID")));
+            }
+        }
+        return itineraries;
+    }
+
+    public void deleteUserAndItineraries(int userId) throws SQLException {
+        String deleteItineraries = "DELETE FROM Itineraries WHERE UserID = ?";
+        String deleteUser = "DELETE FROM Users WHERE UserID = ?";
+        try (Connection con = getConnection();
+             PreparedStatement stmtItineraries = con.prepareStatement(deleteItineraries);
+             PreparedStatement stmtUser = con.prepareStatement(deleteUser)) {
+            con.setAutoCommit(false); // Transaction control
+            stmtItineraries.setInt(1, userId);
+            stmtItineraries.executeUpdate();
+            stmtUser.setInt(1, userId);
+            stmtUser.executeUpdate();
+            con.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error deleting user and itineraries: " + e.getMessage());
+        }
+    }
+
+    public void addExpense(int itineraryId, String category, String description, double amount) throws SQLException {
+        String query = "INSERT INTO Expenses (ItineraryID, Category, Description, Amount) VALUES (?, ?, ?, ?)";
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, itineraryId);
+            stmt.setString(2, category);
+            stmt.setString(3, description);
+            stmt.setDouble(4, amount);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void deleteExpense(int expenseId) throws SQLException {
+        String query = "DELETE FROM Expenses WHERE ExpenseID = ?";
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, expenseId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void addGeneralReport(int userId, String reportContent) throws SQLException {
+        String query = "INSERT INTO GeneralReports (UserID, ReportContent) VALUES (?, ?)";
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, reportContent);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<String> viewGeneralReports(int userId) throws SQLException {
+        String query = "SELECT ReportContent FROM GeneralReports WHERE UserID = ?";
+        List<String> reports = new ArrayList<>();
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                reports.add(rs.getString("ReportContent"));
+            }
+        }
+        return reports;
+    }
+
+    public void updateUserProfile(int userId, String name, String email, String preferences) throws SQLException {
+        String procedure = "{CALL UpdateUserProfile(?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, name);
+            stmt.setString(3, email);
+            stmt.setString(4, preferences);
+            stmt.executeUpdate();
+        }
+    }
+
+    public UserProfile getUserProfile(int userId) throws SQLException {
+        String query = "SELECT FullName, Email, Preferences FROM Users WHERE UserID = ?";
+        try (Connection con = getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new UserProfile(rs.getString("FullName"), rs.getString("Email"), rs.getString("Preferences"));
+            }
+        }
+        return null;
+    }
+
+	 public List<Itinerary> getItineraries(int userId) throws SQLException {
+	    String query = "SELECT ItineraryID, TripTitle, TripStartDate, TripEndDate, Destination, Accommodations, Details FROM Itineraries WHERE UserID = ?";
+	    List<Itinerary> itineraries = new ArrayList<>();
+	    try (Connection con = getConnection();
+	         PreparedStatement stmt = con.prepareStatement(query)) {
+	        stmt.setInt(1, userId); // Filter itineraries for the specific user
+	        ResultSet rs = stmt.executeQuery();
+	        while (rs.next()) {
+	            Itinerary itinerary = new Itinerary(
+	                rs.getInt("ItineraryID"),
+	                rs.getString("TripTitle"),
+	                userId, 
+	                rs.getString("Destination"),
+	                rs.getString("TripStartDate") + " - " + rs.getString("TripEndDate"),  
+	                rs.getString("Accommodations"),
+	                rs.getString("Details"),
+	                this 
+	            );
+	            itineraries.add(itinerary);
+	        }
+	    }
+	    return itineraries;
+	}
+
+    public void logCollaborator(int itineraryId, int userId, String role) throws SQLException {
+        String procedure = "{CALL LogCollaborator(?, ?, ?)}";
+        try (Connection con = getConnection();
+             CallableStatement stmt = con.prepareCall(procedure)) {
+            stmt.setInt(1, itineraryId);
+            stmt.setInt(2, userId);
+            stmt.setString(3, role);  // Role can be 'Viewer' or 'Editor'
+            stmt.executeUpdate();
+        }
+    }
+
+    public void addTripChat(int itineraryId, int userId, String message) throws SQLException {
+        String query = "INSERT INTO TripChat (ItineraryID, UserID, Message) VALUES (?, ?, ?)";
+        try (Connection con = getConnection(); PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, itineraryId);
+            stmt.setInt(2, userId);
+            stmt.setString(3, message);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<String> getTripChat(int itineraryId) throws SQLException {
+        String query = "SELECT Message FROM TripChat WHERE ItineraryID = ?";
+        List<String> messages = new ArrayList<>();
+        try (Connection con = getConnection(); PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setInt(1, itineraryId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                messages.add(rs.getString("Message"));
+            }
+        }
+        return messages;
+    }
+
+    public List<String> getAllFeedbacks() throws SQLException {
+        List<String> feedbacks = new ArrayList<>();
+        String sql = "SELECT feedback_message FROM feedbacks";
+
+        try (Connection con = getConnection(); // Use getConnection() here
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String feedbackMessage = rs.getString("feedback_message");
+                feedbacks.add(feedbackMessage);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving all feedbacks: " + e.getMessage());
+            throw e;  
+        }
+
+        return feedbacks;
+    }
+}

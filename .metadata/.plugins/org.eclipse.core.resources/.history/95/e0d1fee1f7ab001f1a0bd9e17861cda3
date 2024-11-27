@@ -1,0 +1,17 @@
+package application;
+
+public class Feedback {
+    private int rating;
+    private String comments;
+
+    // Constructor
+    public Feedback(int rating, String comments) {
+        this.rating = rating;
+        this.comments = comments;
+    }
+
+    // Methods
+    public void viewFeedback() {
+        System.out.println("Feedback - Rating: " + rating + ", Comments: " + comments);
+    }
+}

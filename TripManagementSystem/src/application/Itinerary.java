@@ -1,0 +1,81 @@
+package application;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Itinerary {
+    private int itineraryId;
+    private String tripTitle;
+    private int userId;
+    private String destination;
+    private String dates;
+    private String accommodations;
+    private String details;
+    private List<Expense> expenses = new ArrayList<>();
+    private Database db;
+
+    // Existing constructor
+    public Itinerary(int itineraryId, String tripTitle, int userId, String destination, String dates, String accommodations, String details, Database db) {
+        this.itineraryId = itineraryId;
+        this.tripTitle = tripTitle;
+        this.userId = userId;
+        this.destination = destination;
+        this.dates = dates;
+        this.accommodations = accommodations;
+        this.details = details;
+        this.db=db;
+    }
+
+    // Overloaded constructor for simpler initialization
+    public Itinerary(int itineraryId, String tripTitle, int userId) {
+        this.itineraryId = itineraryId;
+        this.tripTitle = tripTitle;
+        this.userId = userId;
+    }
+
+    // Add getters and setters for new fields
+    public int getItineraryId() {
+        return itineraryId;
+    }
+
+    public String getTripTitle() {
+        return tripTitle;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    // Additional functionalities
+    public void addExpense(String category, String description, double amount) {
+        try {
+            db.logExpense(itineraryId, category, description, amount);
+            System.out.println("Expense added: " + category + " - " + amount);
+        } catch (Exception e) {
+            System.out.println("Error adding expense: " + e.getMessage());
+        }
+    }
+
+    public void trackExpenses() {
+        try {
+            expenses = db.getExpenses(itineraryId);
+            System.out.println("Tracking expenses for itinerary: " + destination);
+            for (Expense expense : expenses) {
+                System.out.println("Expense: " + expense.getDescription() + ", Amount: " + expense.getAmount());
+            }
+        } catch (Exception e) {
+            System.out.println("Error tracking expenses: " + e.getMessage());
+        }
+    }
+    
+    public void addCollaborator(int userId, String role) {
+        try {
+            db.logCollaborator(itineraryId, userId, role);
+            System.out.println("Collaborator added: User ID - " + userId + ", Role - " + role);
+        } catch (Exception e) {
+            System.out.println("Error adding collaborator: " + e.getMessage());
+        }
+    }
+
+    
+}

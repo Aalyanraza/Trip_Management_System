@@ -1,0 +1,17 @@
+package application;
+
+public class Report {
+    private Itinerary itinerary;
+    private String format;
+
+    // Constructor
+    public Report(Itinerary itinerary, String format) {
+        this.itinerary = itinerary;
+        this.format = format;
+    }
+
+    public void generate() {
+        System.out.println("Generating " + format + " report for itinerary:");
+        itinerary.viewDetails();
+    }
+}

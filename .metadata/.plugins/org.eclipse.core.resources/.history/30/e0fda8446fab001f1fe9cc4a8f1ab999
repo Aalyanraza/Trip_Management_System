@@ -1,0 +1,61 @@
+package application;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Itinerary {
+    private String destination;
+    private String dates;
+    private String accommodations;
+    private List<Expense> expenses;
+    private String details;
+    private List<RealTimeUpdate> realTimeUpdates;
+    private List<User> collaborators;
+
+    // Constructor
+    public Itinerary(String destination, String dates, String accommodations, String details) {
+        this.destination = destination;
+        this.dates = dates;
+        this.accommodations = accommodations;
+        this.details = details;
+        this.expenses = new ArrayList<>();
+        this.collaborators = new ArrayList<>();
+    }
+
+    // Getters
+    public String getDestination() {
+        return destination;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    // Methods
+    public void viewDetails() {
+        System.out.println("Itinerary details:");
+        System.out.println("Destination: " + destination);
+        System.out.println("Dates: " + dates);
+        System.out.println("Accommodations: " + accommodations);
+        System.out.println("Details: " + details);
+    }
+
+    public void editDetails(String newDetails) {
+        this.details = newDetails;
+        System.out.println("Itinerary details updated.");
+    }
+
+    public void addExpense(Expense expense) {
+        this.expenses.add(expense);
+        System.out.println("Added expense: " + expense.getDescription());
+    }
+
+    public void shareWithUser(User user) {
+        this.collaborators.add(user);
+        System.out.println("Shared itinerary with: " + user.getProfile().getName());
+    }
+}

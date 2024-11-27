@@ -1,0 +1,38 @@
+package application;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class RealTimeUpdate {
+    private String updateType;
+    private String details;
+    private Date timestamp;
+
+    // Constructor with String date
+    public RealTimeUpdate(String updateType, String details, String timestamp) throws ParseException {
+        this.updateType = updateType;
+        this.details = details;
+        this.timestamp = new SimpleDateFormat("yyyy-MM-dd").parse(timestamp); // Convert String to Date
+    }
+
+    // Getters
+    public String getUpdateType() {
+        return updateType;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    // Display Method
+    public void displayUpdate() {
+        System.out.println("Update Type: " + updateType);
+        System.out.println("Details: " + details);
+        System.out.println("Timestamp: " + timestamp);
+    }
+}

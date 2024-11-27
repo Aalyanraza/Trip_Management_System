@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CreateitenaryController">
+   <children>
+      <!-- Create Itinerary Button -->
+      <Button fx:id="createButton" layoutX="423.0" layoutY="337.0" mnemonicParsing="false" text="Create" onAction="#handleCreateItinerary" />
+
+      <!-- Back to Dashboard Button -->
+      <Button fx:id="backToDashboardButton" layoutX="72.0" layoutY="337.0" mnemonicParsing="false" text="Back to Dashboard" onAction="#handleBackToDashboard" />
+
+      <!-- Page Title -->
+      <Label layoutX="210.0" layoutY="14.0" text="Create Itinerary" underline="true">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+
+      <!-- Input Fields -->
+      <TextField fx:id="tripTitleField" layoutX="188.0" layoutY="94.0" promptText="Enter trip title" />
+      <TextField fx:id="startDateField" layoutX="188.0" layoutY="130.0" promptText="Enter start date (YYYY-MM-DD)" />
+      <TextField fx:id="endDateField" layoutX="188.0" layoutY="163.0" promptText="Enter end date (YYYY-MM-DD)" />
+      <TextField fx:id="destinationField" layoutX="188.0" layoutY="200.0" promptText="Enter destination" />
+
+      <!-- Labels -->
+      <Label layoutX="102.0" layoutY="98.0" text="Trip Title" />
+      <Label layoutX="102.0" layoutY="134.0" text="Start Date" />
+      <Label layoutX="102.0" layoutY="167.0" text="End Date" />
+      <Label layoutX="102.0" layoutY="204.0" text="Destination" />
+   </children>
+</AnchorPane>

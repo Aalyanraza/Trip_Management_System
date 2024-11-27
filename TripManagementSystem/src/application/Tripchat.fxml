@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.TripchatController">
+   <children>
+      <!-- Title Label -->
+      <Label layoutX="245.0" layoutY="14.0" text="Trip Chat" underline="true">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+
+      <!-- Back to Dashboard Button -->
+      <Button fx:id="backButton" layoutX="14.0" layoutY="366.0" mnemonicParsing="false" text="Back to Dashboard" onAction="#handleBackToDashboard" />
+
+      <!-- Itinerary List Selection -->
+      <ListView fx:id="itineraryListView" layoutX="106.0" layoutY="191.0" prefHeight="115.0" prefWidth="387.0" />
+
+      <!-- Message Input Area -->
+      <TextArea fx:id="messageInput" layoutX="109.0" layoutY="315.0" prefHeight="39.0" prefWidth="271.0" />
+
+      <!-- Post Button -->
+      <Button fx:id="postButton" layoutX="419.0" layoutY="315.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="74.0" text="Post" onAction="#handlePostMessage" />
+
+      <!-- Itinerary Table -->
+      <TableView fx:id="itineraryTable" layoutX="106.0" layoutY="59.0" prefHeight="115.0" prefWidth="387.0">
+         <columns>
+            <TableColumn fx:id="itineraryColumn" prefWidth="384.0000305175781" text="Select Itinerary" />
+         </columns>
+      </TableView>
+   </children>
+</AnchorPane>

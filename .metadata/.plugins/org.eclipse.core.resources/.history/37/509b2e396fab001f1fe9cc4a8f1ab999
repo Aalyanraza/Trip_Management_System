@@ -1,0 +1,79 @@
+package application;
+	
+import javafx.application.Application;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+
+
+public class Main extends Application {
+	@Override
+	public void start(Stage primaryStage) {
+		try {
+			BorderPane root = new BorderPane();
+			Scene scene = new Scene(root,400,400);
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setTitle("Trip Management System");
+			primaryStage.setScene(scene);
+			primaryStage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		//launch(args);
+		// Create UserProfile objects
+        UserProfile profile1 = new UserProfile("Alice", "alice@example.com", "Adventure");
+        UserProfile profile2 = new UserProfile("Bob", "bob@example.com", "Luxury");
+
+        // Create User objects
+        User user1 = new User("alice123", "password123", profile1);
+        User user2 = new User("bob456", "password456", profile2);
+
+        // Test user login
+        System.out.println("User 1 Login: " + user1.login("alice123", "password123"));
+        System.out.println("User 2 Login: " + user2.login("bob456", "wrongpassword")); // Should fail
+
+        // Create an Itinerary
+        Itinerary itinerary = new Itinerary("Paris", "2024-12-20 to 2024-12-30", "Hotel Parisian", "Visit Eiffel Tower, Louvre Museum");
+        System.out.println("\n--- Itinerary Created ---");
+        itinerary.viewDetails();
+
+        // User creates an itinerary
+        user1.createItinerary(itinerary);
+
+        // Add expenses to itinerary
+        Expense expense1 = new Expense("Flight Tickets", 500.0);
+        Expense expense2 = new Expense("Hotel Stay", 700.0);
+        itinerary.addExpense(expense1);
+        itinerary.addExpense(expense2);
+
+        // Track expenses
+        System.out.println("\n--- Tracking Expenses ---");
+        user1.trackExpenses(itinerary);
+
+        // Edit itinerary details
+        System.out.println("\n--- Editing Itinerary ---");
+        user1.editItinerary(itinerary, "Visit Eiffel Tower, Louvre Museum, and Disneyland");
+        itinerary.viewDetails();
+
+        // Collaborate for group travel
+        System.out.println("\n--- Adding Collaborator ---");
+        user1.collaborateForGroupTravel(itinerary, user2);
+
+        // Generate travel report
+        System.out.println("\n--- Generating Travel Report ---");
+        user1.generateTravelReport(itinerary);
+
+        // Real-time updates (Optional feature extension)
+        System.out.println("\n--- Real-time Updates ---");
+        RealTimeUpdate update1 = new RealTimeUpdate("Flight delayed by 2 hours", "12:00 PM");
+        itinerary.realTimeUpdates.add(update1);
+        itinerary.realTimeUpdates.forEach(update -> System.out.println(update.getTimestamp() + " - " + update.getMessage()));
+
+        // Manage user profile
+        System.out.println("\n--- Managing User Profile ---");
+        user1.manageUserProfile("Adventure, Art, and History");
+	}
+}

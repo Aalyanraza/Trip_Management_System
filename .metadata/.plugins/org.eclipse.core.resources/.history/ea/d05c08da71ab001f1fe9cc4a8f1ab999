@@ -1,0 +1,84 @@
+package application;
+
+import java.sql.*;
+
+public class Database 
+{
+    private static final String URL = "jdbc:mysql://localhost:3306/TripManagementSystem";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "aalyankazmi";
+
+    public Connection getConnection() throws SQLException 
+    {
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+
+    public void createUser(String username, String password, String email, String fullName, String role) throws SQLException 
+    {
+        String procedure = "{CALL UserLogin(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+	        stmt.setString(1, username);
+	        stmt.setString(2, password);
+	        stmt.setString(3, email);
+	        stmt.setString(4, fullName);
+	        stmt.setString(5, role);
+	        stmt.executeUpdate();
+    	}
+    }
+
+    public void createItinerary(int userId, String tripTitle, String tripStartDate, String tripEndDate, String destination) throws SQLException 
+    {
+        String procedure = "{CALL LogItinerary(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+    	{
+            stmt.setInt(1, userId);
+            stmt.setString(2, tripTitle);
+            stmt.setString(3, tripStartDate);
+            stmt.setString(4, tripEndDate);
+            stmt.setString(5, destination);
+            stmt.executeUpdate();
+    	}
+    }
+
+    public void logExpense(int itineraryId, String category, String description, double amount) throws SQLException 
+    {
+        String procedure = "{CALL LogExpense(?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+    	{
+            stmt.setInt(1, itineraryId);
+            stmt.setString(2, category);
+            stmt.setString(3, description);
+            stmt.setDouble(4, amount);
+            stmt.executeUpdate();
+    	}
+    }
+
+    public void logFeedback(int userId, String message) throws SQLException 
+    {
+        String procedure = "{CALL LogFeedback(?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+    	{
+            stmt.setInt(1, userId);
+            stmt.setString(2, message);
+            stmt.executeUpdate();
+    	}
+    }
+
+    public void logCollaborator(int itineraryId, int userId, String role) throws SQLException 
+    {
+        String procedure = "{CALL LogCollaborator(?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+    	{	
+            stmt.setInt(1, itineraryId);
+            stmt.setInt(2, userId);
+            stmt.setString(3, role);
+            stmt.executeUpdate();
+        }
+    }
+}

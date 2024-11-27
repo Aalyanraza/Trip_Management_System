@@ -1,0 +1,7 @@
+ckage application;
+
+import javafx.fxml.FXML;
+
+public class AdminsettingsController {
+
+}

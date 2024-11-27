@@ -1,0 +1,44 @@
+package application;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Itinerary {
+    private int itineraryId;
+    private String destination;
+    private String dates;
+    private String accommodations;
+    private String details;
+    private List<Expense> expenses = new ArrayList<>();
+    private Database db;
+
+    public Itinerary(int itineraryId, String destination, String dates, String accommodations, String details, Database db) {
+        this.itineraryId = itineraryId;
+        this.destination = destination;
+        this.dates = dates;
+        this.accommodations = accommodations;
+        this.details = details;
+        this.db = db;
+    }
+
+    public void addExpense(String category, String description, double amount) {
+        try {
+            db.logExpense(itineraryId, category, description, amount);
+            System.out.println("Expense added: " + category + " - " + amount);
+        } catch (Exception e) {
+            System.out.println("Error adding expense: " + e.getMessage());
+        }
+    }
+
+    public void trackExpenses() {
+        try {
+            expenses = db.getExpenses(itineraryId);
+            System.out.println("Tracking expenses for itinerary: " + destination);
+            for (Expense expense : expenses) {
+                System.out.println("Expense: " + expense.getDescription() + ", Amount: " + expense.getAmount());
+            }
+        } catch (Exception e) {
+            System.out.println("Error tracking expenses: " + e.getMessage());
+        }
+    }
+}

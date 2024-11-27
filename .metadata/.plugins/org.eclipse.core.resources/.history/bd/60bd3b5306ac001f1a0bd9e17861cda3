@@ -1,0 +1,59 @@
+package application;
+	
+import javafx.application.Application;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+
+
+public class Main extends Application {
+	@Override
+	public void start(Stage primaryStage) {
+		try {
+			BorderPane root = new BorderPane();
+			Scene scene = new Scene(root,400,400);
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setTitle("Trip Management System");
+			primaryStage.setScene(scene);
+			primaryStage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		//launch(args);
+		try {
+			Database db = new Database();
+	
+	        // Create User objects
+	        User user1 = new User(1, "alice123", "password123",
+	                new UserProfile("Alice", "alice@example.com", "Adventure"), db);
+	        User user2 = new User(2, "bob456", "password456",
+	                new UserProfile("Bob", "bob@example.com", "Luxury"), db);
+	
+	        // Test login
+	        System.out.println("User 1 Login: " + user1.login("alice123", "password123"));
+	        System.out.println("User 2 Login: " + user2.login("bob456", "wrongpassword")); // Should fail
+	
+	        // User 1 creates an itinerary
+	        user1.createItinerary("Paris Adventure", "2024-12-20", "2024-12-30", "Paris");
+	
+	        // Fetch and use an itinerary
+	        Itinerary itinerary = new Itinerary(1, "Paris", "2024-12-20 to 2024-12-30", "Hotel Parisian", "Explore Paris", db);
+	
+	        // Add expenses to the itinerary
+	        itinerary.addExpense("Flight Tickets", "Round trip airfare", 500.0);
+	        itinerary.addExpense("Hotel Stay", "Accommodation for 10 nights", 700.0);
+	
+	        // Track expenses
+	        itinerary.trackExpenses();
+	
+	        // Log feedback
+	        user1.logFeedback("Great trip to Paris!");
+
+	    } catch (Exception e) {
+	        System.out.println("Application error: " + e.getMessage());
+	    }
+	}
+}

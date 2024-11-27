@@ -1,0 +1,121 @@
+package application;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Database 
+{
+    private static final String URL = "jdbc:mysql://localhost:3306/TripManagementSystem";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "aalyankazmi";
+
+    public Connection getConnection() throws SQLException 
+    {
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+
+    public void createUser(String username, String password, String email, String fullName, String role) throws SQLException 
+    {
+        String procedure = "{CALL UserLogin(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+	        stmt.setString(1, username);
+	        stmt.setString(2, password);
+	        stmt.setString(3, email);
+	        stmt.setString(4, fullName);
+	        stmt.setString(5, role);
+	        stmt.executeUpdate();
+        }
+    }
+
+    public User getUser(String username, String password) throws SQLException 
+    {
+        String query = "SELECT * FROM Users WHERE Username = ? AND Password = ?";
+        try (Connection con = getConnection();
+        PreparedStatement stmt = con.prepareStatement(query)) 
+        {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) 
+            {
+            	UserProfile profile = new UserProfile(
+                        rs.getString("FullName"),
+                        rs.getString("Email"),
+                        ""
+                );
+                return new User(rs.getInt("UserID"), rs.getString("Username"), rs.getString("Password"), profile, this);
+            }
+        }
+        return null;
+    }
+
+    public void createItinerary(int userId, String tripTitle, String startDate, String endDate, String destination) throws SQLException 
+    {
+        String procedure = "{CALL LogItinerary(?, ?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+            stmt.setInt(1, userId);
+            stmt.setString(2, tripTitle);
+            stmt.setString(3, startDate);
+            stmt.setString(4, endDate);
+            stmt.setString(5, destination);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<Expense> getExpenses(int itineraryId) throws SQLException 
+    {
+        String query = "SELECT * FROM Expenses WHERE ItineraryID = ?";
+        List<Expense> expenses = new ArrayList<>();
+        try (Connection con = getConnection();
+        PreparedStatement stmt = con.prepareStatement(query)) 
+        {
+            stmt.setInt(1, itineraryId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) 
+            {
+                Expense expense = new Expense(
+                        rs.getString("Category"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Description")
+                );
+                expenses.add(expense);
+            }
+        }
+        return expenses;
+    }
+
+    public void logExpense(int itineraryId, String category, String description, double amount) throws SQLException 
+    {
+        String procedure = "{CALL LogExpense(?, ?, ?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+            stmt.setInt(1, itineraryId);
+            stmt.setString(2, category);
+            stmt.setString(3, description);
+            stmt.setDouble(4, amount);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void logFeedback(int userId, String message) throws SQLException 
+    {
+        String procedure = "{CALL LogFeedback(?, ?)}";
+        try (Connection con = getConnection();
+        CallableStatement stmt = con.prepareCall(procedure)) 
+        {
+            stmt.setInt(1, userId);
+            stmt.setString(2, message);
+            stmt.executeUpdate();
+        }
+    }
+
+}
+// Create these functions too: getallusers(userid, username, email), getallitinerary(itinerarytitle and user id )
+// deleteuser(delete user and all his iteraries), deleteiternry, editinerary, addExpence, deleteexpence
+// addfeedback, viewfeedback, addgeneralreport, viewgenralreport, 

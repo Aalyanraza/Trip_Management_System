@@ -1,0 +1,29 @@
+package application;
+
+public class Expense {
+    private String category;
+    private double amount;
+    private String description;
+
+    // Constructor
+    public Expense(String category, double amount, String description) {
+        this.category = category;
+        this.amount = amount;
+        this.description = description.isEmpty() ? "No Description" : description; // Default description
+    }
+
+    // Getters
+    public String getDescription() {
+        return description;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    // Methods
+    public void editDetails(String newDescription) {
+        this.description = newDescription;
+        System.out.println("Expense description updated.");
+    }
+}

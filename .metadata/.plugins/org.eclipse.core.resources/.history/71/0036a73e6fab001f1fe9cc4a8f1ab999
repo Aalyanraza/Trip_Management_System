@@ -1,0 +1,24 @@
+package application;
+
+import java.util.Date;
+
+public class RealTimeUpdate {
+    private String updateType;
+    private String details;
+    private Date timestamp;
+
+    // Constructor
+    public RealTimeUpdate(String updateType, String details, Date timestamp) {
+        this.updateType = updateType;
+        this.details = details;
+        this.timestamp = timestamp;
+    }
+
+    // Methods
+    public void displayUpdate() {
+        System.out.println("Real-Time Update:");
+        System.out.println("Type: " + updateType);
+        System.out.println("Details: " + details);
+        System.out.println("Timestamp: " + timestamp);
+    }
+}

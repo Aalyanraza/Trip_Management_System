@@ -1,0 +1,45 @@
+package application;
+
+public class User {
+    private int userId;
+    private String username;
+    private String password;
+    private UserProfile profile;
+    private Database db;
+
+    public User(int userId, String username, String password, UserProfile profile, Database db) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.profile = profile;
+        this.db = db;
+    }
+
+    public boolean login(String inputUsername, String inputPassword) {
+        try {
+            User user = db.getUser(inputUsername, inputPassword);
+            return user != null;
+        } catch (Exception e) {
+            System.out.println("Login error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public void createItinerary(String tripTitle, String startDate, String endDate, String destination) {
+        try {
+            db.createItinerary(userId, tripTitle, startDate, endDate, destination);
+            System.out.println("Itinerary created for trip: " + tripTitle);
+        } catch (Exception e) {
+            System.out.println("Error creating itinerary: " + e.getMessage());
+        }
+    }
+
+    public void logFeedback(String message) {
+        try {
+            db.logFeedback(userId, message);
+            System.out.println("Feedback logged: " + message);
+        } catch (Exception e) {
+            System.out.println("Error logging feedback: " + e.getMessage());
+        }
+    }
+}

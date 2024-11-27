@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.EdititenariesController">
+   <children>
+      <!-- Title Label -->
+      <Label layoutX="225.0" layoutY="14.0" text="Edit Itinerary" underline="true">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+
+      <!-- Table for Displaying Itineraries -->
+      <TableView fx:id="itineraryTable" layoutX="55.0" layoutY="90.0" prefHeight="200.0" prefWidth="492.0">
+        <columns>
+          <TableColumn fx:id="titleColumn" prefWidth="136.66659545898438" text="Trip Title" />
+          <TableColumn fx:id="startDateColumn" prefWidth="159.3333740234375" text="Start Date" />
+          <TableColumn fx:id="endDateColumn" prefWidth="84.0" text="End Date" />
+          <TableColumn fx:id="destinationColumn" prefWidth="112.0" text="Destination" />
+        </columns>
+      </TableView>
+
+      <!-- Buttons -->
+      <Button fx:id="backButton" layoutX="83.0" layoutY="346.0" mnemonicParsing="false" text="Back to Dashboard" onAction="#handleBackToDashboard" />
+      <Button fx:id="deleteButton" layoutX="260.0" layoutY="346.0" mnemonicParsing="false" text="Delete" onAction="#handleDeleteItinerary" />
+      <Button fx:id="editButton" layoutX="382.0" layoutY="346.0" mnemonicParsing="false" text="Edit" onAction="#handleEditItinerary" />
+   </children>
+</AnchorPane>

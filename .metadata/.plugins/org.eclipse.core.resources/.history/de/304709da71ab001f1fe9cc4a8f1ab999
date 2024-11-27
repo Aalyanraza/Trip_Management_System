@@ -1,0 +1,32 @@
+package application;
+
+public class UserProfile {
+    private String name;
+    private String email;
+    private String preferences;
+
+    // Constructor
+    public UserProfile(String name, String email, String preferences) {
+        this.name = name;
+        this.email = email;
+        this.preferences = preferences;
+    }
+
+    // Getters
+    public String getName() {
+        return name;
+    }
+
+    // Methods
+    public void updateProfile(String newPreferences) {
+        this.preferences = newPreferences;
+        System.out.println("Profile updated with new preferences.");
+    }
+
+    public void viewProfile() {
+        System.out.println("User Profile:");
+        System.out.println("Name: " + name);
+        System.out.println("Email: " + email);
+        System.out.println("Preferences: " + preferences);
+    }
+}
